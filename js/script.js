@@ -19,6 +19,9 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const pageInfo = document.getElementById('pageInfo');
 
+/* 🔍 SEARCH DOM (ADDED) */
+const emailSearch = document.getElementById('emailSearch');
+const clearSearchBtn = document.getElementById('clearSearchBtn');
 
 /* ====== Application State ====== */
 let files = [];
@@ -27,11 +30,14 @@ let currentFilter = 'all';
 let currentPage = 1;
 const emailsPerPage = 10;
 
+/* 🔍 SEARCH STATE (ADDED) */
+let searchQuery = '';
+
 /* ====== Event Listeners ====== */
 document.addEventListener('DOMContentLoaded', initApp);
 
 browseBtn.addEventListener('click', (e) => {
-    e.stopPropagation();   // 🔥 stops bubbling to dropArea
+    e.stopPropagation();
     fileInput.click();
 });
 fileInput.addEventListener('change', handleFileSelect);
@@ -45,6 +51,26 @@ clearAllBtn.addEventListener('click', clearAllFiles);
 
 prevBtn.addEventListener('click', goToPrevPage);
 nextBtn.addEventListener('click', goToNextPage);
+
+/* 🔍 SEARCH LISTENER (ADDED) */
+if (emailSearch) {
+    emailSearch.addEventListener('input', (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        currentPage = 1;
+        displayEmails();
+    });
+}
+
+/* ❌ CLEAR SEARCH BUTTON (ADDED) */
+if (clearSearchBtn && emailSearch) {
+    clearSearchBtn.addEventListener('click', () => {
+        emailSearch.value = '';
+        searchQuery = '';
+        currentPage = 1;
+        displayEmails();
+        emailSearch.focus();
+    });
+}
 
 /* ====== Filter Buttons ====== */
 document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -171,9 +197,7 @@ function formatFileSize(bytes) {
     return (bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
 }
 
-/* ======================================================
-   ✅ REAL EMAIL EXTRACTION (ONLY PART THAT CHANGED)
-   ====================================================== */
+/* ====== REAL EMAIL EXTRACTION ====== */
 
 async function extractEmails() {
     if (!files.length) {
@@ -204,7 +228,6 @@ async function extractEmails() {
         extractEmailsFromText(text, file.name);
     }
 
-    // Remove duplicates
     const seen = new Set();
     emails = emails.filter(e => {
         if (seen.has(e.email)) return false;
@@ -220,7 +243,7 @@ async function extractEmails() {
     showNotification(`Extracted ${emails.length} emails`, 'success');
 }
 
-/* ====== PDF Extraction ====== */
+/* ====== PDF ====== */
 async function extractTextFromPDF(file) {
     const buffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
@@ -234,7 +257,7 @@ async function extractTextFromPDF(file) {
     return text;
 }
 
-/* ====== DOCX Extraction ====== */
+/* ====== DOCX ====== */
 async function extractTextFromDOCX(file) {
     const buffer = await file.arrayBuffer();
     const result = await mammoth.extractRawText({ arrayBuffer: buffer });
@@ -261,13 +284,28 @@ function validateEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-/* ====== Display Emails ====== */
+/* ✨ Highlight helper (ADDED) */
+function highlightMatch(text, query) {
+    if (!query) return text;
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${escaped})`, 'ig');
+    return text.replace(regex, '<mark>$1</mark>');
+}
+
+/* ====== Display Emails (FILTER + SEARCH + HIGHLIGHT) ====== */
 function displayEmails() {
-    const filtered = emails.filter(e =>
-        currentFilter === 'all' ||
-        (currentFilter === 'valid' && e.valid) ||
-        (currentFilter === 'invalid' && !e.valid)
-    );
+    const filtered = emails.filter(e => {
+        const matchesFilter =
+            currentFilter === 'all' ||
+            (currentFilter === 'valid' && e.valid) ||
+            (currentFilter === 'invalid' && !e.valid);
+
+        const matchesSearch =
+            e.email.toLowerCase().includes(searchQuery) ||
+            e.source.toLowerCase().includes(searchQuery);
+
+        return matchesFilter && matchesSearch;
+    });
 
     const start = (currentPage - 1) * emailsPerPage;
     const pageEmails = filtered.slice(start, start + emailsPerPage);
@@ -283,15 +321,18 @@ function displayEmails() {
     }
 
     pageEmails.forEach(e => {
+        const emailHtml = highlightMatch(e.email, searchQuery);
+        const sourceHtml = highlightMatch(e.source, searchQuery);
+
         emailsList.innerHTML += `
             <div class="email-row">
-                <div class="email-column email-address">${e.email}</div>
+                <div class="email-column email-address">${emailHtml}</div>
                 <div class="email-column">
                     <span class="status-badge ${e.valid ? 'status-valid' : 'status-invalid'}">
                         ${e.valid ? 'Valid' : 'Invalid'}
                     </span>
                 </div>
-                <div class="email-column">${e.source}</div>
+                <div class="email-column">${sourceHtml}</div>
                 <div class="email-column">
                     <button class="action-icon copy"
                         onclick="navigator.clipboard.writeText('${e.email}')">
@@ -378,7 +419,7 @@ function generateSampleEmails() {
     // kept intentionally for demo/future use
 }
 
-/* ====== Notification System (UNCHANGED) ====== */
+/* ====== Notification System ====== */
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;

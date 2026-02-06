@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -47,7 +49,7 @@
                     <p>or click to browse</p>
                     <p class="file-types">Supported formats: PDF, DOCX</p>
                     <input type="file" id="fileInput" accept=".pdf,.docx" multiple style="display: none;">
-                    <button class="btn primary-btn" id="browseBtn">
+                    <button class="btn primary-btn" id="browseBtn" type="button">
                         <i class="fas fa-folder-open"></i> Browse Files
                     </button>
                 </div>
@@ -83,6 +85,12 @@
                 </h2>
 
                 <div class="controls">
+                    <!-- 🔍 Email Search (ADD ONLY) -->
+                    <div class="search-box">
+                        <input type="text" id="emailSearch" placeholder="Search email, domain or file name..."
+                            autocomplete="off" />
+                    </div>
+
                     <div class="filter-options">
                         <h4>Filter by:</h4>
                         <div class="filter-buttons">
@@ -219,4 +227,5 @@
     <!-- MAIN SCRIPT -->
     <script src="js/script.js"></script>
 </body>
+
 </html>
