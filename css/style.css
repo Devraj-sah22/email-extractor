@@ -1114,3 +1114,16 @@ mark {
     content: " ▼";
     opacity: 1;
 }
+
+/* ====== Checkbox Column ====== */
+.email-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* Update grid to include checkbox */
+.emails-header,
+.email-row {
+    grid-template-columns: 0.5fr 2fr 1fr 1.2fr 1.5fr 1fr;
+}

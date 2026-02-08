@@ -23,6 +23,9 @@ const pageInfo = document.getElementById('pageInfo');
 const emailSearch = document.getElementById('emailSearch');
 const clearSearchBtn = document.getElementById('clearSearchBtn');
 
+/* ☑ SELECT ALL CHECKBOX (ADDED) */
+const selectAllEmails = document.getElementById('selectAllEmails');
+
 /* ====== Application State ====== */
 let files = [];
 let emails = [];
@@ -36,6 +39,9 @@ let searchQuery = '';
 /* 🔃 SORT STATE (ADDED) */
 let sortColumn = null;      // email | status | domain | source
 let sortDirection = 'asc'; // asc | desc
+
+/* ☑ CHECKBOX STATE (ADDED) */
+let selectedEmails = new Set();
 
 /* ====== Event Listeners ====== */
 document.addEventListener('DOMContentLoaded', initApp);
@@ -96,6 +102,27 @@ document.addEventListener('click', (e) => {
     header.classList.add(sortDirection);
 
     displayEmails();
+});
+
+/* ☑ SELECT ALL CHECKBOX HANDLER (ADDED) */
+if (selectAllEmails) {
+    selectAllEmails.addEventListener('change', () => {
+        document.querySelectorAll('.email-checkbox').forEach(cb => {
+            cb.checked = selectAllEmails.checked;
+            const id = cb.dataset.id;
+            if (cb.checked) selectedEmails.add(id);
+            else selectedEmails.delete(id);
+        });
+    });
+}
+
+/* ☑ INDIVIDUAL CHECKBOX HANDLER (ADDED) */
+document.addEventListener('change', (e) => {
+    if (!e.target.classList.contains('email-checkbox')) return;
+
+    const id = e.target.dataset.id;
+    if (e.target.checked) selectedEmails.add(id);
+    else selectedEmails.delete(id);
 });
 
 /* ====== Filter Buttons ====== */
@@ -373,27 +400,53 @@ function displayEmails() {
     }
 
     pageEmails.forEach(e => {
+        const checked = selectedEmails.has(String(e.id)) ? 'checked' : '';
         const emailHtml = highlightMatch(e.email, searchQuery);
-        const domainHtml = highlightMatch(e.domain, searchQuery); // ✅ ADDED
+        const domainHtml = highlightMatch(e.domain, searchQuery);
         const sourceHtml = highlightMatch(e.source, searchQuery);
 
         emailsList.innerHTML += `
-            <div class="email-row">
-                <div class="email-column email-address">${emailHtml}</div>
-                <div class="email-column">
-                    <span class="status-badge ${e.valid ? 'status-valid' : 'status-invalid'}">
-                        ${e.valid ? 'Valid' : 'Invalid'}
-                    </span>
-                </div>
-                <div class="email-column email-domain">${domainHtml}</div> <!-- ✅ ADDED -->
-                <div class="email-column">${sourceHtml}</div>
-                <div class="email-column">
-                    <button class="action-icon copy"
-                        onclick="navigator.clipboard.writeText('${e.email}')">
-                        <i class="fas fa-copy"></i>
-                    </button>
-                </div>
-            </div>`;
+        <div class="email-row">
+            <!-- ☑ Checkbox Column (ADDED) -->
+            <div class="email-column">
+                <input 
+                    type="checkbox"
+                    class="email-checkbox"
+                    data-id="${e.id}"
+                    ${checked}
+                >
+            </div>
+
+            <!-- Email -->
+            <div class="email-column email-address">
+                ${emailHtml}
+            </div>
+
+            <!-- Status -->
+            <div class="email-column">
+                <span class="status-badge ${e.valid ? 'status-valid' : 'status-invalid'}">
+                    ${e.valid ? 'Valid' : 'Invalid'}
+                </span>
+            </div>
+
+            <!-- Domain -->
+            <div class="email-column email-domain">
+                ${domainHtml}
+            </div>
+
+            <!-- Source -->
+            <div class="email-column">
+                ${sourceHtml}
+            </div>
+
+            <!-- Actions -->
+            <div class="email-column">
+                <button class="action-icon copy"
+                    onclick="navigator.clipboard.writeText('${e.email}')">
+                    <i class="fas fa-copy"></i>
+                </button>
+            </div>
+        </div>`;
     });
 
     updatePagination(filtered.length);
