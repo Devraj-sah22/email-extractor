@@ -1127,3 +1127,13 @@ mark {
 .email-row {
     grid-template-columns: 0.5fr 2fr 1fr 1.2fr 1.5fr 1fr;
 }
+
+/* ===== Rows Per Page Dropdown ===== */
+.rows-select {
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 2px solid var(--border-color);
+    font-weight: 600;
+    cursor: pointer;
+    background: white;
+}

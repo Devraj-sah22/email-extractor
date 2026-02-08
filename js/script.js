@@ -23,6 +23,7 @@ const pageInfo = document.getElementById('pageInfo');
 const emailSearch = document.getElementById('emailSearch');
 const clearSearchBtn = document.getElementById('clearSearchBtn');
 const copySelectedBtn = document.getElementById('copySelectedBtn');
+const rowsPerPageSelect = document.getElementById('rowsPerPageSelect');
 
 /* ☑ SELECT ALL CHECKBOX (ADDED) */
 const selectAllEmails = document.getElementById('selectAllEmails');
@@ -32,7 +33,7 @@ let files = [];
 let emails = [];
 let currentFilter = 'all';
 let currentPage = 1;
-const emailsPerPage = 10;
+let emailsPerPage = 20;
 
 /* 🔍 SEARCH STATE (ADDED) */
 let searchQuery = '';
@@ -66,6 +67,14 @@ nextBtn.addEventListener('click', goToNextPage);
 if (copySelectedBtn) {
     copySelectedBtn.addEventListener('click', copySelectedEmails);
 }
+if (rowsPerPageSelect) {
+    rowsPerPageSelect.addEventListener('change', (e) => {
+        emailsPerPage = parseInt(e.target.value, 10);
+        currentPage = 1;
+        displayEmails();
+    });
+}
+
 
 /* 🔍 SEARCH LISTENER (ADDED) */
 if (emailSearch) {
@@ -414,6 +423,11 @@ function displayEmails() {
         });
     }
 
+    // ✅ Keep current page within valid range
+    currentPage = Math.min(
+        currentPage,
+        Math.ceil(filtered.length / emailsPerPage) || 1
+    );
     const start = (currentPage - 1) * emailsPerPage;
     const pageEmails = filtered.slice(start, start + emailsPerPage);
 
