@@ -22,6 +22,7 @@ const pageInfo = document.getElementById('pageInfo');
 /* 🔍 SEARCH DOM (ADDED) */
 const emailSearch = document.getElementById('emailSearch');
 const clearSearchBtn = document.getElementById('clearSearchBtn');
+const copySelectedBtn = document.getElementById('copySelectedBtn');
 
 /* ☑ SELECT ALL CHECKBOX (ADDED) */
 const selectAllEmails = document.getElementById('selectAllEmails');
@@ -61,6 +62,10 @@ clearAllBtn.addEventListener('click', clearAllFiles);
 
 prevBtn.addEventListener('click', goToPrevPage);
 nextBtn.addEventListener('click', goToNextPage);
+
+if (copySelectedBtn) {
+    copySelectedBtn.addEventListener('click', copySelectedEmails);
+}
 
 /* 🔍 SEARCH LISTENER (ADDED) */
 if (emailSearch) {
@@ -526,6 +531,32 @@ function exportToCSV() {
     link.download = 'extracted_emails.csv';
     link.click();
 }
+/* ====== Copy Selected Emails (ADDED) ====== */
+function copySelectedEmails() {
+    if (!selectedEmails.size) {
+        showNotification('No emails selected to copy.', 'warning');
+        return;
+    }
+
+    // Get selected email addresses
+    const selectedList = emails
+        .filter(e => selectedEmails.has(String(e.id)))
+        .map(e => e.email);
+
+    const textToCopy = selectedList.join('\n');
+
+    navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+            showNotification(
+                `${selectedList.length} email(s) copied to clipboard`,
+                'success'
+            );
+        })
+        .catch(() => {
+            showNotification('Failed to copy emails.', 'error');
+        });
+}
+
 
 /* ====== Clear ====== */
 function clearAllFiles() {
