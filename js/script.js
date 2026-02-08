@@ -33,6 +33,10 @@ const emailsPerPage = 10;
 /* 🔍 SEARCH STATE (ADDED) */
 let searchQuery = '';
 
+/* 🔃 SORT STATE (ADDED) */
+let sortColumn = null;      // email | status | domain | source
+let sortDirection = 'asc'; // asc | desc
+
 /* ====== Event Listeners ====== */
 document.addEventListener('DOMContentLoaded', initApp);
 
@@ -71,6 +75,28 @@ if (clearSearchBtn && emailSearch) {
         emailSearch.focus();
     });
 }
+
+/* ====== SORT HEADER CLICK (ADDED) ====== */
+document.addEventListener('click', (e) => {
+    const header = e.target.closest('.sortable');
+    if (!header) return;
+
+    const column = header.dataset.sort;
+
+    if (sortColumn === column) {
+        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortColumn = column;
+        sortDirection = 'asc';
+    }
+
+    document.querySelectorAll('.sortable')
+        .forEach(h => h.classList.remove('asc', 'desc'));
+
+    header.classList.add(sortDirection);
+
+    displayEmails();
+});
 
 /* ====== Filter Buttons ====== */
 document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -308,6 +334,30 @@ function displayEmails() {
 
         return matchesFilter && matchesSearch;
     });
+    /* 🔃 SORT LOGIC (ADDED) */
+    if (sortColumn) {
+        filtered.sort((a, b) => {
+            let A = '', B = '';
+
+            if (sortColumn === 'email') {
+                A = a.email;
+                B = b.email;
+            } else if (sortColumn === 'status') {
+                A = a.valid ? 'valid' : 'invalid';
+                B = b.valid ? 'valid' : 'invalid';
+            } else if (sortColumn === 'domain') {
+                A = a.domain;
+                B = b.domain;
+            } else if (sortColumn === 'source') {
+                A = a.source;
+                B = b.source;
+            }
+
+            return sortDirection === 'asc'
+                ? A.localeCompare(B)
+                : B.localeCompare(A);
+        });
+    }
 
     const start = (currentPage - 1) * emailsPerPage;
     const pageEmails = filtered.slice(start, start + emailsPerPage);

@@ -143,12 +143,13 @@
 
             <div class="emails-container">
                 <div class="emails-header">
-                    <div class="email-column">Email Address</div>
-                    <div class="email-column">Status</div>
-                    <div class="email-column">Domain</div> <!-- ✅ ADDED -->
-                    <div class="email-column">Source File</div>
+                    <div class="email-column sortable" data-sort="email">Email Address</div>
+                    <div class="email-column sortable" data-sort="status">Status</div>
+                    <div class="email-column sortable" data-sort="domain">Domain</div>
+                    <div class="email-column sortable" data-sort="source">Source File</div>
                     <div class="email-column">Actions</div>
                 </div>
+
 
                 <div class="emails-list" id="emailsList">
                     <div class="empty-state">
@@ -223,7 +224,7 @@
         </div>
     </footer>
 
-     <script src="js/script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>

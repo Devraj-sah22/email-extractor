@@ -494,6 +494,7 @@ header::before {
     display: flex;
     flex-direction: column;
     height: 100%;
+    margin-top: 30px;
 }
 
 .controls {
@@ -640,7 +641,7 @@ header::before {
 .emails-list {
     flex: 1;
     overflow-y: auto;
-    max-height: 400px;
+    max-height: 800px;
 }
 
 .email-row {
@@ -1092,3 +1093,24 @@ mark {
     }
 }
 
+
+
+.sortable {
+    cursor: pointer;
+}
+
+.sortable::after {
+    content: " ↕";
+    font-size: 12px;
+    opacity: 0.4;
+}
+
+.sortable.asc::after {
+    content: " ▲";
+    opacity: 1;
+}
+
+.sortable.desc::after {
+    content: " ▼";
+    opacity: 1;
+}
