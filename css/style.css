@@ -113,12 +113,12 @@ header {
 header::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    /* top: 0; */
+    /* left: 0; */
+    /* right: 0; */
+    /* bottom: 0; */
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" opacity="0.1"><path d="M0,0 L1000,0 L1000,100 L0,100 Z" fill="white"/></svg>');
-    background-size: 100% 100%;
+    /* background-size: 100% 100%; */
 }
 
 .header-content {
@@ -624,7 +624,7 @@ header::before {
 
 .emails-header {
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr 1fr;
+   grid-template-columns: 2fr 1fr 1.2fr 1.5fr 1fr;  /* Changed*/
     background-color: var(--light-color);
     padding: var(--space-md);
     font-weight: 600;
@@ -645,7 +645,7 @@ header::before {
 
 .email-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1.5fr 1fr;
+    grid-template-columns: 2fr 1fr 1.2fr 1.5fr 1fr; /* Changed*/
     padding: var(--space-md);
     border-bottom: 1px solid var(--border-color);
     align-items: center;
@@ -663,6 +663,12 @@ header::before {
 .email-address {
     font-family: 'SF Mono', Monaco, 'Cascadia Mono', monospace;
     font-size: var(--text-sm);
+    word-break: break-all;
+}
+/* ✅ ADDED (NEW, DOES NOT REPLACE ANYTHING) */
+.email-domain {
+    font-size: var(--text-sm);
+    color: var(--gray-dark);
     word-break: break-all;
 }
 
@@ -919,6 +925,13 @@ footer {
     
     .email-status::before {
         content: "Status: ";
+        font-weight: 600;
+        color: var(--gray-color);
+        margin-right: var(--space-sm);
+    }
+    /* ✅ ADDED */
+    .email-domain::before {
+        content: "Domain: ";
         font-weight: 600;
         color: var(--gray-color);
         margin-right: var(--space-sm);

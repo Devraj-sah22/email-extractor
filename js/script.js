@@ -273,6 +273,7 @@ function extractEmailsFromText(text, source) {
         emails.push({
             id: Date.now() + Math.random(),
             email,
+            domain: email.split('@')[1] || '',   // ✅ ADDED
             valid: validateEmail(email),
             source,
             extractedAt: new Date().toISOString()
@@ -292,7 +293,7 @@ function highlightMatch(text, query) {
     return text.replace(regex, '<mark>$1</mark>');
 }
 
-/* ====== Display Emails (FILTER + SEARCH + HIGHLIGHT) ====== */
+/* ====== Display Emails (FILTER + SEARCH + HIGHLIGHT + DOMAIN) ====== */
 function displayEmails() {
     const filtered = emails.filter(e => {
         const matchesFilter =
@@ -302,6 +303,7 @@ function displayEmails() {
 
         const matchesSearch =
             e.email.toLowerCase().includes(searchQuery) ||
+            e.domain.toLowerCase().includes(searchQuery) ||   // ✅ ADDED
             e.source.toLowerCase().includes(searchQuery);
 
         return matchesFilter && matchesSearch;
@@ -322,6 +324,7 @@ function displayEmails() {
 
     pageEmails.forEach(e => {
         const emailHtml = highlightMatch(e.email, searchQuery);
+        const domainHtml = highlightMatch(e.domain, searchQuery); // ✅ ADDED
         const sourceHtml = highlightMatch(e.source, searchQuery);
 
         emailsList.innerHTML += `
@@ -332,6 +335,7 @@ function displayEmails() {
                         ${e.valid ? 'Valid' : 'Invalid'}
                     </span>
                 </div>
+                <div class="email-column email-domain">${domainHtml}</div> <!-- ✅ ADDED -->
                 <div class="email-column">${sourceHtml}</div>
                 <div class="email-column">
                     <button class="action-icon copy"
@@ -385,9 +389,9 @@ function exportToCSV() {
         return;
     }
 
-    let csv = 'Email,Valid,Source,Date\n';
+    let csv = 'Email,Domain,Valid,Source,Date\n'; // ✅ ADDED Domain
     emails.forEach(e => {
-        csv += `"${e.email}",${e.valid},"${e.source}","${e.extractedAt}"\n`;
+        csv += `"${e.email}","${e.domain}",${e.valid},"${e.source}","${e.extractedAt}"\n`;
     });
 
     const blob = new Blob([csv], { type: 'text/csv' });

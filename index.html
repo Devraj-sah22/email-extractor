@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
 
-    <!-- ✅ ADDED (ONLY REQUIRED UPDATE) -->
+    <!-- ✅ REQUIRED LIBS (UNCHANGED) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
 </head>
@@ -35,144 +35,142 @@
     </header>
 
     <main class="container">
-        <div class="main-content">
 
-            <!-- Upload Section -->
-            <section class="upload-section card">
-                <h2 class="section-title">
-                    <i class="fas fa-cloud-upload-alt"></i> Upload Documents
-                </h2>
+        <!-- ================= UPLOAD SECTION (UNCHANGED) ================= -->
+        <section class="upload-section card">
+            <h2 class="section-title">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Documents
+            </h2>
 
-                <div class="upload-area" id="dropArea">
-                    <i class="fas fa-file-upload"></i>
-                    <h3>Drop your files here</h3>
-                    <p>or click to browse</p>
-                    <p class="file-types">Supported formats: PDF, DOCX</p>
-                    <input type="file" id="fileInput" accept=".pdf,.docx" multiple style="display: none;">
-                    <button class="btn primary-btn" id="browseBtn" type="button">
-                        <i class="fas fa-folder-open"></i> Browse Files
-                    </button>
+            <div class="upload-area" id="dropArea">
+                <i class="fas fa-file-upload"></i>
+                <h3>Drop your files here</h3>
+                <p>or click to browse</p>
+                <p class="file-types">Supported formats: PDF, DOCX</p>
+                <input type="file" id="fileInput" accept=".pdf,.docx" multiple style="display:none;">
+                <button class="btn primary-btn" id="browseBtn" type="button">
+                    <i class="fas fa-folder-open"></i> Browse Files
+                </button>
+            </div>
+
+            <div class="file-list" id="fileList">
+                <div class="empty-state">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>No files selected</h3>
+                    <p>Upload PDF or DOCX files to extract emails</p>
+                </div>
+            </div>
+
+            <div class="upload-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="totalFiles">0</span>
+                    <span class="stat-label">Total Files</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="totalSize">0 MB</span>
+                    <span class="stat-label">Total Size</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="supportedFiles">0</span>
+                    <span class="stat-label">Supported Files</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= RESULTS SECTION (MOVED DOWN + DOMAIN COLUMN) ================= -->
+        <section class="results-section card">
+            <h2 class="section-title">
+                <i class="fas fa-envelope"></i> Extracted Emails
+            </h2>
+
+            <div class="controls">
+                <div class="search-box">
+                    <input type="text" id="emailSearch" placeholder="Search email, domain or file name..."
+                        autocomplete="off">
                 </div>
 
-                <div class="file-list" id="fileList">
+                <div class="filter-options">
+                    <h4>Filter by:</h4>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">
+                            <i class="fas fa-list"></i> All Emails
+                        </button>
+                        <button class="filter-btn" data-filter="valid">
+                            <i class="fas fa-check-circle"></i> Valid Only
+                        </button>
+                        <button class="filter-btn" data-filter="invalid">
+                            <i class="fas fa-times-circle"></i> Invalid Only
+                        </button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn success-btn" id="extractBtn">
+                        <i class="fas fa-magic"></i> Extract Emails
+                    </button>
+                    <button class="btn export-btn" id="exportBtn">
+                        <i class="fas fa-download"></i> Export CSV
+                    </button>
+                </div>
+            </div>
+
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Extracting emails from documents...</p>
+                <p class="loading-details" id="loadingDetails">Processing 0 files</p>
+            </div>
+
+            <div class="results-info" id="resultsInfo">
+                <div class="results-summary">
+                    <div class="summary-item">
+                        <span class="summary-value" id="totalEmails">0</span>
+                        <span class="summary-label">Total Emails</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-value valid" id="validCount">0</span>
+                        <span class="summary-label">Valid Emails</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-value invalid" id="invalidCount">0</span>
+                        <span class="summary-label">Invalid Emails</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-value" id="uniqueEmails">0</span>
+                        <span class="summary-label">Unique Emails</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="emails-container">
+                <div class="emails-header">
+                    <div class="email-column">Email Address</div>
+                    <div class="email-column">Status</div>
+                    <div class="email-column">Domain</div> <!-- ✅ ADDED -->
+                    <div class="email-column">Source File</div>
+                    <div class="email-column">Actions</div>
+                </div>
+
+                <div class="emails-list" id="emailsList">
                     <div class="empty-state">
-                        <i class="fas fa-file-alt"></i>
-                        <h3>No files selected</h3>
-                        <p>Upload PDF or DOCX files to extract emails</p>
+                        <i class="fas fa-inbox"></i>
+                        <h3>No emails extracted yet</h3>
+                        <p>Upload documents and click "Extract Emails" to begin</p>
                     </div>
                 </div>
+            </div>
 
-                <div class="upload-stats">
-                    <div class="stat-item">
-                        <span class="stat-value" id="totalFiles">0</span>
-                        <span class="stat-label">Total Files</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value" id="totalSize">0 MB</span>
-                        <span class="stat-label">Total Size</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value" id="supportedFiles">0</span>
-                        <span class="stat-label">Supported Files</span>
-                    </div>
-                </div>
-            </section>
+            <div class="pagination" id="pagination" style="display:none;">
+                <button class="pagination-btn" id="prevBtn" disabled>
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                <button class="pagination-btn" id="nextBtn" disabled>
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
 
-            <!-- Results Section -->
-            <section class="results-section card">
-                <h2 class="section-title">
-                    <i class="fas fa-envelope"></i> Extracted Emails
-                </h2>
-
-                <div class="controls">
-                    <!-- 🔍 Email Search (ADD ONLY) -->
-                    <div class="search-box">
-                        <input type="text" id="emailSearch" placeholder="Search email, domain or file name..."
-                            autocomplete="off" />
-                    </div>
-
-                    <div class="filter-options">
-                        <h4>Filter by:</h4>
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" data-filter="all">
-                                <i class="fas fa-list"></i> All Emails
-                            </button>
-                            <button class="filter-btn" data-filter="valid">
-                                <i class="fas fa-check-circle"></i> Valid Only
-                            </button>
-                            <button class="filter-btn" data-filter="invalid">
-                                <i class="fas fa-times-circle"></i> Invalid Only
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="action-buttons">
-                        <button class="btn success-btn" id="extractBtn">
-                            <i class="fas fa-magic"></i> Extract Emails
-                        </button>
-
-                        <button class="btn export-btn" id="exportBtn">
-                            <i class="fas fa-download"></i> Export CSV
-                        </button>
-                    </div>
-                </div>
-
-                <div class="loading" id="loadingIndicator">
-                    <div class="spinner"></div>
-                    <p>Extracting emails from documents...</p>
-                    <p class="loading-details" id="loadingDetails">Processing 0 files</p>
-                </div>
-
-                <div class="results-info" id="resultsInfo">
-                    <div class="results-summary">
-                        <div class="summary-item">
-                            <span class="summary-value" id="totalEmails">0</span>
-                            <span class="summary-label">Total Emails</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-value valid" id="validCount">0</span>
-                            <span class="summary-label">Valid Emails</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-value invalid" id="invalidCount">0</span>
-                            <span class="summary-label">Invalid Emails</span>
-                        </div>
-                        <div class="summary-item">
-                            <span class="summary-value" id="uniqueEmails">0</span>
-                            <span class="summary-label">Unique Emails</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="emails-container">
-                    <div class="emails-header">
-                        <div class="email-column">Email Address</div>
-                        <div class="email-column">Status</div>
-                        <div class="email-column">Source File</div>
-                        <div class="email-column">Actions</div>
-                    </div>
-
-                    <div class="emails-list" id="emailsList">
-                        <div class="empty-state">
-                            <i class="fas fa-inbox"></i>
-                            <h3>No emails extracted yet</h3>
-                            <p>Upload documents and click "Extract Emails" to begin</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pagination" id="pagination" style="display: none;">
-                    <button class="pagination-btn" id="prevBtn" disabled>
-                        <i class="fas fa-chevron-left"></i> Previous
-                    </button>
-                    <span class="page-info" id="pageInfo">Page 1 of 1</span>
-                    <button class="pagination-btn" id="nextBtn" disabled>
-                        Next <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </section>
-        </div>
-
+        <!-- ================= INSTRUCTIONS (UNCHANGED) ================= -->
         <div class="instructions card">
             <h3><i class="fas fa-info-circle"></i> How to Use</h3>
             <div class="steps">
@@ -199,6 +197,7 @@
                 </div>
             </div>
         </div>
+
     </main>
 
     <footer>
@@ -224,8 +223,7 @@
         </div>
     </footer>
 
-    <!-- MAIN SCRIPT -->
-    <script src="js/script.js"></script>
+     <script src="js/script.js"></script>
 </body>
 
 </html>
