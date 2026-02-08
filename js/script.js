@@ -104,26 +104,49 @@ document.addEventListener('click', (e) => {
     displayEmails();
 });
 
-/* ☑ SELECT ALL CHECKBOX HANDLER (ADDED) */
+/* ☑ SELECT ALL CHECKBOX HANDLER (FIXED – ALL PAGES) */
 if (selectAllEmails) {
     selectAllEmails.addEventListener('change', () => {
-        document.querySelectorAll('.email-checkbox').forEach(cb => {
-            cb.checked = selectAllEmails.checked;
-            const id = cb.dataset.id;
-            if (cb.checked) selectedEmails.add(id);
-            else selectedEmails.delete(id);
-        });
+
+        if (selectAllEmails.checked) {
+            // ✅ Select ALL emails (across all pages)
+            emails.forEach(e => {
+                selectedEmails.add(String(e.id));
+            });
+        } else {
+            // ❌ Deselect ALL emails
+            selectedEmails.clear();
+        }
+
+        // 🔄 Re-render current page to sync UI
+        displayEmails();
     });
 }
+
 
 /* ☑ INDIVIDUAL CHECKBOX HANDLER (ADDED) */
 document.addEventListener('change', (e) => {
     if (!e.target.classList.contains('email-checkbox')) return;
 
     const id = e.target.dataset.id;
-    if (e.target.checked) selectedEmails.add(id);
-    else selectedEmails.delete(id);
+
+    if (e.target.checked) {
+        selectedEmails.add(id);
+    } else {
+        selectedEmails.delete(id);
+    }
+
+    updateSelectAllCheckbox(); // ✅ ADD THIS LINE
 });
+
+function updateSelectAllCheckbox() {
+    if (!selectAllEmails) return;
+
+    selectAllEmails.checked =
+        selectedEmails.size > 0 &&
+        selectedEmails.size === emails.length;
+}
+
 
 /* ====== Filter Buttons ====== */
 document.querySelectorAll('.filter-btn').forEach(btn => {
