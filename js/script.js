@@ -540,7 +540,7 @@ function displayEmails() {
             </div>
 
             <!-- Source -->
-            <div class="email-column">
+            <div class="email-column source-file" title="${e.source}">
                 ${sourceHtml}
             </div>
 

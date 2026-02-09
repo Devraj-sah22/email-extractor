@@ -1137,3 +1137,11 @@ mark {
     cursor: pointer;
     background: white;
 }
+
+/* Truncate Source File column with ellipsis */
+.email-column.source-file {
+    max-width: 180px;          /* adjust as you like */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
