@@ -402,7 +402,7 @@ async function extractTextFromDOCX(file) {
 
 /* ====== Email Parsing ====== */
 function extractEmailsFromText(text, source) {
-    const regex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}/g;
+    const regex = /\b\S+@\S+\b/g; // ✅ UPDATED
     const found = text.match(regex) || [];
 
     found.forEach(email => {
