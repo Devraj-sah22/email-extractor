@@ -511,7 +511,7 @@ function displayEmails() {
         const sourceHtml = highlightMatch(e.source, searchQuery);
 
         emailsList.innerHTML += `
-        <div class="email-row">
+       <div class="email-row" data-id="${e.id}">
             <!-- ☑ Checkbox Column (ADDED) -->
             <div class="email-column">
                 <input 
@@ -553,10 +553,29 @@ function displayEmails() {
             </div>
         </div>`;
     });
+    // ☑ Attach checkbox listeners AFTER render
+    document.querySelectorAll('.email-checkbox').forEach(cb => {
+        cb.removeEventListener('change', handleEmailCheckboxChange);
+        cb.addEventListener('change', handleEmailCheckboxChange);
+    });
+
 
     updatePagination(filtered.length);
     updateSummary();
 }
+
+/* ☑ HANDLE INDIVIDUAL EMAIL CHECKBOX */
+function handleEmailCheckboxChange(e) {
+    const id = e.target.dataset.id;
+    if (!id) return;
+
+    if (e.target.checked) {
+        selectedEmails.add(String(id));
+    } else {
+        selectedEmails.delete(String(id));
+    }
+}
+
 
 function updateSummary() {
     document.getElementById('totalEmails').textContent = emails.length;
@@ -597,17 +616,41 @@ function exportToCSV() {
         return;
     }
 
-    let csv = 'Email,Domain,Valid,Source,Date\n'; // ✅ ADDED Domain
-    emails.forEach(e => {
+    // ✅ Decide what to export
+    const dataToExport =
+        selectedEmails.size > 0
+            ? emails.filter(e => selectedEmails.has(String(e.id)))
+            : emails;
+
+    if (!dataToExport.length) {
+        showNotification('No selected emails to export.', 'warning');
+        return;
+    }
+
+    let csv = 'Email,Domain,Valid,Source,Date\n';
+
+    dataToExport.forEach(e => {
         csv += `"${e.email}","${e.domain}",${e.valid},"${e.source}","${e.extractedAt}"\n`;
     });
 
     const blob = new Blob([csv], { type: 'text/csv' });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'extracted_emails.csv';
+    link.download =
+        selectedEmails.size > 0
+            ? 'selected_emails.csv'
+            : 'extracted_emails.csv';
+
     link.click();
+
+    showNotification(
+        selectedEmails.size > 0
+            ? `${dataToExport.length} selected emails exported`
+            : `All ${dataToExport.length} emails exported`,
+        'success'
+    );
 }
+
 /* ====== Copy Selected Emails (ADDED) ====== */
 function copySelectedEmails() {
     if (!selectedEmails.size) {
