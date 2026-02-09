@@ -372,8 +372,18 @@ function extractEmailsFromText(text, source) {
 }
 
 function validateEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const strictRegex =
+        /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
+
+    // extra safety checks
+    if (!strictRegex.test(email)) return false;
+    if (email.includes('..')) return false;
+    if (email.startsWith('.') || email.endsWith('.')) return false;
+    if (email.includes('@.') || email.includes('.@')) return false;
+
+    return true;
 }
+
 
 /* ✨ Highlight helper (ADDED) */
 function highlightMatch(text, query) {
