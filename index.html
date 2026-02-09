@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EmailExtract Pro | Premium Email Extractor</title>
+    <title>EmailExtract  | Email Extractor</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
@@ -21,14 +21,9 @@
                 <div>
                     <div class="logo">
                         <i class="fas fa-envelope-open-text"></i>
-                        <span>EmailExtract Pro</span>
+                        <span>EmailExtract </span>
                     </div>
                     <div class="tagline">Extract emails from PDF & DOCX files with precision</div>
-                </div>
-                <div>
-                    <button class="btn secondary-btn" id="clearAllBtn">
-                        <i class="fas fa-trash-alt"></i> Clear All
-                    </button>
                 </div>
             </div>
         </div>
@@ -100,6 +95,9 @@
                         </button>
                         <button class="filter-btn" data-filter="invalid">
                             <i class="fas fa-times-circle"></i> Invalid Only
+                        </button>
+                        <button class="filter-btn" id="clearAllBtn">
+                            <i class="fas fa-trash-alt"></i> Clear All
                         </button>
                     </div>
                 </div>
@@ -173,14 +171,32 @@
             </div>
 
             <div class="pagination" id="pagination" style="display:none;">
+
+                <!-- ⏮ First -->
+                <button class="pagination-btn" id="firstBtn" disabled>
+                    <i class="fas fa-angle-double-left"></i> First
+                </button>
+
+                <!-- ◀ Previous -->
                 <button class="pagination-btn" id="prevBtn" disabled>
                     <i class="fas fa-chevron-left"></i> Previous
                 </button>
+
+                <!-- Page Info -->
                 <span class="page-info" id="pageInfo">Page 1 of 1</span>
+
+                <!-- Next ▶ -->
                 <button class="pagination-btn" id="nextBtn" disabled>
                     Next <i class="fas fa-chevron-right"></i>
                 </button>
+
+                <!-- Last ⏭ -->
+                <button class="pagination-btn" id="lastBtn" disabled>
+                    Last <i class="fas fa-angle-double-right"></i>
+                </button>
+
             </div>
+
         </section>
 
         <!-- ================= INSTRUCTIONS (UNCHANGED) ================= -->
@@ -219,7 +235,7 @@
                 <div class="footer-info">
                     <div class="logo">
                         <i class="fas fa-envelope-open-text"></i>
-                        <span>EmailExtract Pro</span>
+                        <span>EmailExtract </span>
                     </div>
                     <p>Secure email extraction from documents</p>
                 </div>
@@ -230,7 +246,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2023 EmailExtract Pro. All processing happens locally in your browser.</p>
+                <p>&copy; 2026 EmailExtract . All processing happens locally in your browser.</p>
                 <p class="security-note"><i class="fas fa-lock"></i> Your documents are never uploaded to any server</p>
             </div>
         </div>

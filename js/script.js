@@ -15,8 +15,10 @@ const emailsList = document.getElementById('emailsList');
 const loadingIndicator = document.getElementById('loadingIndicator');
 const resultsInfo = document.getElementById('resultsInfo');
 const pagination = document.getElementById('pagination');
+const firstBtn = document.getElementById('firstBtn');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
+const lastBtn = document.getElementById('lastBtn');
 const pageInfo = document.getElementById('pageInfo');
 
 /* 🔍 SEARCH DOM (ADDED) */
@@ -109,6 +111,10 @@ clearAllBtn.addEventListener('click', clearAllFiles);
 
 prevBtn.addEventListener('click', goToPrevPage);
 nextBtn.addEventListener('click', goToNextPage);
+
+firstBtn.addEventListener('click', goToFirstPage);
+lastBtn.addEventListener('click', goToLastPage);
+
 
 if (copySelectedBtn) {
     copySelectedBtn.addEventListener('click', copySelectedEmails);
@@ -594,7 +600,11 @@ function updatePagination(total) {
     pagination.style.display = 'flex';
     pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
     prevBtn.disabled = currentPage === 1;
+    firstBtn.disabled = currentPage === 1;
+
     nextBtn.disabled = currentPage === totalPages;
+    lastBtn.disabled = currentPage === totalPages;
+
 }
 
 function goToPrevPage() {
@@ -608,6 +618,39 @@ function goToNextPage() {
     currentPage++;
     displayEmails();
 }
+
+/* ⏮ GO TO FIRST PAGE (ADDED) */
+function goToFirstPage() {
+    if (currentPage !== 1) {
+        currentPage = 1;
+        displayEmails();
+    }
+}
+
+/* ⏭ GO TO LAST PAGE (ADDED) */
+function goToLastPage() {
+    const totalPages = Math.ceil(
+        emails.filter(e => {
+            const matchesFilter =
+                currentFilter === 'all' ||
+                (currentFilter === 'valid' && e.valid) ||
+                (currentFilter === 'invalid' && !e.valid);
+
+            const matchesSearch =
+                e.email.toLowerCase().includes(searchQuery) ||
+                e.domain.toLowerCase().includes(searchQuery) ||
+                e.source.toLowerCase().includes(searchQuery);
+
+            return matchesFilter && matchesSearch;
+        }).length / emailsPerPage
+    );
+
+    if (currentPage !== totalPages) {
+        currentPage = totalPages;
+        displayEmails();
+    }
+}
+
 
 /* ====== Export ====== */
 function exportToCSV() {

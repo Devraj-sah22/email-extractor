@@ -108,6 +108,7 @@ header {
     margin-bottom: var(--space-2xl);
     position: relative;
     overflow: hidden;
+    padding: 1rem;
 }
 
 header::before {
@@ -123,7 +124,7 @@ header::before {
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     position: relative;
     z-index: 1;
@@ -135,6 +136,7 @@ header::before {
     gap: var(--space-sm);
     font-size: var(--text-2xl);
     font-weight: 700;
+    justify-self: center;
 }
 
 .logo i {
@@ -333,7 +335,23 @@ header::before {
 .upload-area i {
     font-size: 3.5rem;
     color: var(--primary-color);
+    /* color: #1738d3; */
     margin-bottom: var(--space-md);
+}
+
+#browseBtn i{
+    color: #eaecf3 !important; 
+    font-size: xxx-large;
+    margin-bottom: 0px;  
+}
+
+#clearAllBtn{
+    color: red;
+    border-color: rgb(237, 86, 86);
+}
+#clearAllBtn:hover{
+    color: white;
+    background-color: red;
 }
 
 .upload-area h3 {
@@ -357,6 +375,9 @@ header::before {
     max-height: 300px;
     overflow-y: auto;
     border-radius: var(--radius-md);
+    overflow-x: hidden;
+    background: #f2eef9;
+    padding: 5px;
 }
 
 .empty-state {
@@ -446,6 +467,9 @@ header::before {
     padding: var(--space-xs);
     border-radius: var(--radius-sm);
     flex-shrink: 0;
+    border-radius: 50%;
+    height: 25px;
+    width: 25px;
 }
 
 .remove-file:hover {
