@@ -45,6 +45,52 @@ let sortDirection = 'asc'; // asc | desc
 /* ☑ CHECKBOX STATE (ADDED) */
 let selectedEmails = new Set();
 
+/* 🚫 MANUALLY INVALID EMAILS (ADDED) */
+const MANUALLY_INVALID_EMAILS = new Set([
+    'example@example.com',
+    'email@email.com',
+    'john.doe@gmail.com',
+    'user.name@gmail.com',
+    'admin@domain.com',
+    'support@company.co',
+    'info@website.org',
+    'contact@service.net',
+    'hello@startup.io',
+    'devraj.sah@kiit.ac.in',
+    'student@college.edu',
+    'sales@shop.in',
+    'team.hr@business.com',
+    'billing@paypal.com',
+    'career@google.com',
+    'news@bbc.co.uk',
+    'alerts@banking.com',
+    'official@mail.gov',
+    'feedback@openai.com',
+    'helpdesk@support.io',
+    'noreply@system.com',
+    'test@test.com',
+    'user@user.com',
+    'demo@demo.com',
+    'sample@sample.com',
+    'info@info.com',
+    'admin@admin.com',
+    'contact@contact.com',
+    'hello@hello.com',
+    'mail@mail.com',
+    'support@support.com',
+    'data@data.com',
+    'code@code.com',
+    'dev@dev.com',
+    'cloud@cloud.com',
+    'web@web.com',
+    'app@app.com',
+    'team@team.com',
+    'service@service.com'
+
+
+]);
+
+
 /* ====== Event Listeners ====== */
 document.addEventListener('DOMContentLoaded', initApp);
 
@@ -372,17 +418,24 @@ function extractEmailsFromText(text, source) {
 }
 
 function validateEmail(email) {
+    const lowerEmail = email.toLowerCase();
+
+    // 🚫 Manually invalid emails
+    if (MANUALLY_INVALID_EMAILS.has(lowerEmail)) {
+        return false;
+    }
+
     const strictRegex =
         /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/;
 
-    // extra safety checks
-    if (!strictRegex.test(email)) return false;
-    if (email.includes('..')) return false;
-    if (email.startsWith('.') || email.endsWith('.')) return false;
-    if (email.includes('@.') || email.includes('.@')) return false;
+    if (!strictRegex.test(lowerEmail)) return false;
+    if (lowerEmail.includes('..')) return false;
+    if (lowerEmail.startsWith('.') || lowerEmail.endsWith('.')) return false;
+    if (lowerEmail.includes('@.') || lowerEmail.includes('.@')) return false;
 
     return true;
 }
+
 
 
 /* ✨ Highlight helper (ADDED) */
